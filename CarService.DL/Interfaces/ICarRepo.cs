@@ -6,12 +6,12 @@ namespace CarService.DL.Interfaces
     {
         public Task<Car> AddCar(Car car);
 
-        public Task<Car> GetCarById(int cartId);
+        public Task<Car?> GetCarById(int carId);
 
         public Task<IEnumerable<Car>> GetAllCars();
 
-        public Task<Car> UpdateCar(Car car);
+        public Task<Car?> UpdateCar(Car car);
 
-        public Task<Car> DeleteCar(int cartId);
+        public Task<Car> DeleteCar(int carId);
     }
 }

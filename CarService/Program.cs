@@ -1,4 +1,5 @@
 using System.Reflection;
+using CarService.BL.CommandHandlers;
 using CarService.Extensions;
 using CarService.HealtChecks;
 using CarService.Models.MediatR;
@@ -29,7 +30,7 @@ builder.Services.AddHealthChecks()
     .AddUrlGroup(new Uri("Https://google.bg"), name: "Google Service")
     .AddCheck<CustomHealthCheck>("Server OK");
 
-builder.Services.AddMediatR(typeof(AddCarCommand).Assembly);
+builder.Services.AddMediatR(typeof(AddCarCommandHandler).Assembly);
 
 
 builder.Logging.AddSerilog(logger);
