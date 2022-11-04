@@ -1,8 +1,8 @@
-using System.Reflection;
 using CarService.BL.CommandHandlers;
 using CarService.Extensions;
 using CarService.HealtChecks;
-using CarService.Models.MediatR;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using MediatR;
 using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
@@ -14,6 +14,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.RegisterRepositories()
     .RegisterServices()
     .AddAutoMapper(typeof(Program));
+
+builder.Services.AddFluentValidationAutoValidation()
+    .AddFluentValidationClientsideAdapters();
+builder.Services.AddValidatorsFromAssemblyContaining(typeof(Program));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
