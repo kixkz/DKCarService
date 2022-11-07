@@ -12,6 +12,7 @@ namespace CarService.AutoMapper
             CreateMap<AddCarRequest, Car>();
             CreateMap<DeleteCarRequest, Car>();
             CreateMap<UpdateCarRequest, Car>();
+            CreateMap<AddTyreRequest, Car>();
         }
     }
 }

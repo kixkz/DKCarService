@@ -76,7 +76,7 @@ namespace CarService.Controllers
         {
             if (_clientService.GetById(id) == null)
             {
-                return NotFound($"Client with this id: {id} does not exist");
+                return NotFound($"Client with id: {id} does not exist");
             }
 
             return Ok(await _clientService.UpdateClient(client, id));
