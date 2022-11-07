@@ -5,11 +5,13 @@ VisualStudioVersion = 17.3.32901.215
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarService", "CarService\CarService.csproj", "{30CB4E45-C065-42A7-AC11-3DDCEC43AB05}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarService.Models", "CarService.Models\CarService.Models.csproj", "{76026D1D-5D7B-448E-BEC4-E6EF04A79DF3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarService.Models", "CarService.Models\CarService.Models.csproj", "{76026D1D-5D7B-448E-BEC4-E6EF04A79DF3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarService.DL", "CarService.DL\CarService.DL.csproj", "{53F42189-6398-46A8-96BA-47939D5FBC83}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarService.DL", "CarService.DL\CarService.DL.csproj", "{53F42189-6398-46A8-96BA-47939D5FBC83}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarService.BL", "CarService.BL\CarService.BL.csproj", "{8924B292-2D34-4948-83F5-AA681F9190FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarService.BL", "CarService.BL\CarService.BL.csproj", "{8924B292-2D34-4948-83F5-AA681F9190FA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CraService.Test", "CraService.Test\CraService.Test.csproj", "{99B36495-0C26-4BB9-B2C2-01A05D032D08}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{8924B292-2D34-4948-83F5-AA681F9190FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8924B292-2D34-4948-83F5-AA681F9190FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8924B292-2D34-4948-83F5-AA681F9190FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99B36495-0C26-4BB9-B2C2-01A05D032D08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99B36495-0C26-4BB9-B2C2-01A05D032D08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99B36495-0C26-4BB9-B2C2-01A05D032D08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99B36495-0C26-4BB9-B2C2-01A05D032D08}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

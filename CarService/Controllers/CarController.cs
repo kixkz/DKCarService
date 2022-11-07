@@ -5,6 +5,8 @@ using CarService.Models.Requests;
 using MediatR;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
+using CarService.BL.Kafka;
+using CarService.Models.Models;
 
 namespace CarService.Controllers
 {
@@ -16,13 +18,15 @@ namespace CarService.Controllers
         private readonly ILogger<CarController> _logger;
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
+        private readonly ProducerService<int, Car> _producerService;
 
-        public CarController(ICarRepo carRepo, ILogger<CarController> logger, IMediator mediator, IMapper mapper)
+        public CarController(ICarRepo carRepo, ILogger<CarController> logger, IMediator mediator, IMapper mapper, ProducerService<int, Car> producerService)
         {
             _carRepo = carRepo;
             _logger = logger;
             _mediator = mediator;
             _mapper = mapper;
+            _producerService = producerService;
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -31,6 +35,14 @@ namespace CarService.Controllers
         public async Task<IActionResult> AddCar([FromBody] AddCarRequest car)
         {
             var result = await _mediator.Send(new AddCarCommand(car));
+
+            var newCar = (await _carRepo.GetAllCars()).LastOrDefault();
+
+            if (newCar != null)
+            {
+                await _producerService.Produce(newCar.Id, newCar);
+            }
+
 
             if (result.HttpStatusCode == HttpStatusCode.BadRequest)
             {
@@ -84,7 +96,7 @@ namespace CarService.Controllers
         [HttpGet(nameof(GetCarById))]
         public async Task<IActionResult> GetCarById(int id)
         {
-            if(id <= 0) return BadRequest($"Parameter id:{id} must be greater than zero");
+            if (id <= 0) return BadRequest($"Parameter id:{id} must be greater than zero");
 
             var result = await _mediator.Send(new GetCarByIdCommand(id));
 

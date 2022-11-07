@@ -1,6 +1,6 @@
 ﻿namespace CarService.Models.Models
 {
-    public class Client
+    public record Client
     {
         public int Id { get; set; }
 
