@@ -50,6 +50,8 @@ namespace CarService.DL.Repositories.MsSQL
                     await conn.OpenAsync();
 
                     var result = await conn.ExecuteAsync("DELETE FROM Car WHERE Id=@id", new { id = carId });
+
+                    return carForDelete;
                 }
             }
             catch (Exception e)

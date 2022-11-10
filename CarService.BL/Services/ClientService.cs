@@ -18,13 +18,6 @@ namespace CarService.BL.Services
 
         public async Task<Client> AddClient(Client client)
         {
-            var cli = await _clientRepo.GetClientByName(client.ClientName);
-
-            if (cli != null)
-            {
-                return null;
-            }
-
             return await _clientRepo.AddClient(client);
         }
 
@@ -41,6 +34,11 @@ namespace CarService.BL.Services
         public async Task<Client> GetById(int clientId)
         {
             return await _clientRepo.GetById(clientId);
+        }
+
+        public async Task<Client> GetClientByName(string clientName)
+        {
+            return await _clientRepo.GetClientByName(clientName);
         }
 
         public async Task<Client> UpdateClient(Client client, int id)

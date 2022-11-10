@@ -39,7 +39,12 @@ namespace CarService.BL.Services
             return await _tyreRepo.GetTyreById(tyreId);
         }
 
-        public async Task<Tyre?> UpdateTyre(Tyre tyre)
+        public async Task<Tyre> GetTyreByName(string tyreName)
+        {
+            return await _tyreRepo.GetTyreByName(tyreName);
+        }
+
+        public async Task<Tyre?> UpdateTyre(Tyre tyre, int id)
         {
             return await _tyreRepo.UpdateTyre(tyre);
         }

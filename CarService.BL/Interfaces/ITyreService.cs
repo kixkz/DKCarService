@@ -10,8 +10,10 @@ namespace CarService.BL.Interfaces
 
         public Task<IEnumerable<Tyre>> GetAllTyres();
 
-        public Task<Tyre?> UpdateTyre(Tyre tyre);
+        public Task<Tyre?> UpdateTyre(Tyre tyre, int id);
 
         public Task<Tyre> DeleteTyre(int tyreId);
+
+        public Task<Tyre> GetTyreByName(string tyreName);
     }
 }

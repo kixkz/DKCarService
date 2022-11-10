@@ -5,6 +5,7 @@ using CarService.BL.Services;
 using CarService.DL.Interfaces;
 using CarService.DL.Repositories.MsSQL;
 using CarService.Models.Models;
+using Microsoft.AspNetCore.Mvc.TagHelpers.Cache;
 
 namespace CarService.Extensions
 {
@@ -15,6 +16,7 @@ namespace CarService.Extensions
             services.AddSingleton<IClientRepo, ClientRepo>();
             services.AddSingleton<ICarRepo, CarRepo>();
             services.AddSingleton<ITyreRepo, TyreRepo>();
+            services.AddSingleton<IPurchaseRepo, PurchaseRepo>();
 
             return services;
         }
@@ -23,7 +25,10 @@ namespace CarService.Extensions
         {
             services.AddSingleton<IClientService, ClientService>();
             services.AddSingleton<ITyreService, TyreService>();
-            services.AddSingleton<ProducerService<int, Car>>();
+            services.AddSingleton<IPurchaseService, PurchaseService>();
+            services.AddSingleton<Producer<int, Car>>();
+            services.AddSingleton<Producer<Guid, Purchase>>();
+            services.AddHostedService<ConsumerService<Guid, Purchase>>();
 
             return services;
         }

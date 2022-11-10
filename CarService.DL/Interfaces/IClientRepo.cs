@@ -14,6 +14,6 @@ namespace CarService.DL.Interfaces
 
         public Task<Client> DeleteClient(int clientId);
 
-        public Task<Client?> GetClientByName(string clientName);
+        public Task<Client> GetClientByName(string clientName);
     }
 }

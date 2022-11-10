@@ -3,6 +3,7 @@ using CarService.BL.Kafka;
 using CarService.Extensions;
 using CarService.HealtChecks;
 using CarService.Models.Configurations;
+using CarService.Models.Models;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
@@ -41,10 +42,8 @@ builder.Services.AddMediatR(typeof(AddCarCommandHandler).Assembly);
 builder.Services.Configure<KafkaProducerSettings>(builder.Configuration.GetSection(nameof(KafkaProducerSettings)));
 builder.Services.Configure<KafkaConsumerSettings>(builder.Configuration.GetSection(nameof(KafkaConsumerSettings)));
 
-builder.Services.AddHostedService<ConsumerService<int, int>>();
 
 builder.Services.Configure<JsonSettings>(builder.Configuration.GetSection(nameof(JsonSettings)));
-
 
 builder.Logging.AddSerilog(logger);
 

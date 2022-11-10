@@ -1,7 +1,7 @@
-﻿namespace CarService.BL.Kafka
-{
-    public interface IKafkaConsumerService<TKey, TValue>
-    {
-        void Consume();
-    }
-}
+﻿//namespace CarService.BL.Kafka
+//{
+//    public interface IKafkaConsumerService<TKey, TValue>
+//    {
+//        void Consume();
+//    }
+//}

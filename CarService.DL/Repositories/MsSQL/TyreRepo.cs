@@ -1,4 +1,5 @@
 ﻿using System.Data.SqlClient;
+using System.Security.Cryptography.X509Certificates;
 using CarService.DL.Interfaces;
 using CarService.Models.Models;
 using Dapper;
@@ -50,6 +51,8 @@ namespace CarService.DL.Repositories.MsSQL
                     await conn.OpenAsync();
 
                     var result = await conn.ExecuteAsync("DELETE FROM Tyre WHERE Id=@id", new { id = tyreId });
+
+                    return tyreForDelete;
                 }
             }
             catch (Exception e)
@@ -109,12 +112,31 @@ namespace CarService.DL.Repositories.MsSQL
                     await conn.QueryFirstOrDefaultAsync("UPDATE Tyre SET TyreName=@tyreName, Price=@price, Quantity=@quantity WHERE Id=@id",
                         new {id = tyre.Id, tyreName = tyre.TyreName, price = tyre.Price, quantity = tyre.Quantity });
 
-                    return tyre;
+                    return await GetTyreById(tyre.Id);
                 }
             }
             catch (Exception e)
             {
                 _logger.LogError($"Error in {nameof(UpdateTyre)}:{e.Message}", e);
+            }
+
+            return null;
+        }
+
+        public async Task<Tyre> GetTyreByName(string tyreName)
+        {
+            try
+            {
+                await using (var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+                {
+                    await conn.OpenAsync();
+
+                    return await conn.QueryFirstOrDefaultAsync<Tyre>("SELECT * FROM Tyre WITH(NOLOCK) WHERE TyreName=@TyreName", new { TyreName = tyreName });
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Error in {nameof(GetTyreById)}:{e.Message}", e);
             }
 
             return null;
