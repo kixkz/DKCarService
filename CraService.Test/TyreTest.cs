@@ -1,3 +1,4 @@
+using System.Threading;
 using AutoMapper;
 using CarService.AutoMapper;
 using CarService.BL.Services;
@@ -97,7 +98,7 @@ namespace CraService.Test
             var returnedTyreId = notObjectResult.Value;
 
             Assert.NotNull(returnedTyreId);
-            Assert.Equal("Tyre not exist", returnedTyreId);
+            Assert.Equal("Tyre does not exist", returnedTyreId);
         }
 
         [Fact]
@@ -195,8 +196,121 @@ namespace CraService.Test
             Assert.Equal(1, tyreId);
 
             var resultValue = okObjectResult.Value as Tyre;
-            Assert.NotNull (resultValue);
+            Assert.NotNull(resultValue);
             Assert.Equal(tyreToDelete, resultValue);
+        }
+
+        [Fact]
+        public async Task Tyre_DeleteTyre_NotFound()
+        {
+            //setup
+            var expectedId = 4;
+            var toDelete = _tyres.FirstOrDefault(x => x.Id == expectedId);
+
+            _tyreRepoMock.Setup(x => x.GetTyreById(expectedId)).ReturnsAsync(toDelete);
+
+            //inject
+            var service = new TyreService(_tyreRepoMock.Object, _loggerMock.Object, _mapper);
+            var controller = new TyreController(service, _loggerCarControllerMock.Object);
+
+            //act
+            var result = await controller.DeleteTyre(expectedId);
+
+            //assert
+            var notObjectResult = result as NotFoundObjectResult;
+            Assert.NotNull(notObjectResult);
+
+            var response = notObjectResult.Value;
+            Assert.NotNull(response);
+            Assert.Equal("Tyre does not exist", response);
+        }
+
+        [Fact]
+        public async Task Tyre_Update_Ok()
+        {
+            //setup
+            var expectedId = 2;
+            var tyreToUpdate = _tyres.FirstOrDefault(x => x.Id == expectedId);
+            tyreToUpdate = new Tyre
+            {
+                Id = expectedId,
+                TyreName = "NewName",
+                Price = 55,
+                Quantity = 1
+            };
+
+            _tyreRepoMock.Setup(x => x.GetTyreById(expectedId)).ReturnsAsync(() => _tyres.FirstOrDefault(x => x.Id == expectedId));
+
+            _tyreRepoMock.Setup(x => x.UpdateTyre(It.IsAny<Tyre>())).Callback(() =>
+            {
+                _tyres.RemoveAt(expectedId - 1);
+                _tyres.Add(new Tyre() { Id = expectedId, Price = tyreToUpdate.Price, TyreName = tyreToUpdate.TyreName, Quantity = tyreToUpdate.Quantity });
+            }).ReturnsAsync(() => _tyres.FirstOrDefault(x => x.Id == expectedId));
+
+            //inject
+            var service = new TyreService(_tyreRepoMock.Object, _loggerMock.Object, _mapper);
+            var controller = new TyreController(service, _loggerCarControllerMock.Object);
+
+            //act
+            var result = await controller.UpdateTyre(tyreToUpdate, expectedId);
+
+            //assert
+            var okObjectResult = result as OkObjectResult;
+            Assert.NotNull(okObjectResult);
+
+            var resultValue = okObjectResult.Value as Tyre;
+            Assert.Equal(expectedId, resultValue.Id);
+        }
+
+        [Fact]
+        public async Task Tyre_GetByName_Ok()
+        {
+            //setup
+            var tyreName = "Debica";
+            var expectedTyre = _tyres.First(x => x.TyreName == tyreName);
+
+            _tyreRepoMock.Setup(x => x.GetTyreByName(tyreName)).ReturnsAsync(expectedTyre);
+
+            //inject
+            var service = new TyreService(_tyreRepoMock.Object, _loggerMock.Object, _mapper);
+            var controller = new TyreController(service, _loggerCarControllerMock.Object);
+
+            //act
+            var result = await controller.GetTyreByName(tyreName);
+
+            //Assert
+            var okObjectResult = result as OkObjectResult;
+            Assert.NotNull(okObjectResult);
+
+            var tyre = okObjectResult.Value as Tyre;
+            Assert.NotNull(tyre);
+            Assert.Equal(expectedTyre.TyreName, tyreName);
+        }
+
+        [Fact]
+        public async Task Tyre_GetByName_NotFound()
+        {
+            //setup
+            var tyreName = "New tyres";
+            var expectedTyre = _tyres.FirstOrDefault(x => x.TyreName == tyreName);
+
+            _tyreRepoMock.Setup(x => x.GetTyreByName(tyreName)).ReturnsAsync(expectedTyre);
+
+            //inject
+            var service = new TyreService(_tyreRepoMock.Object, _loggerMock.Object, _mapper);
+            var controller = new TyreController(service, _loggerCarControllerMock.Object);
+
+            //act
+            var result = await controller.GetTyreByName(tyreName);
+
+            //Assert
+            var notObjectResult = result as NotFoundObjectResult;
+            Assert.NotNull(notObjectResult);
+
+            var returnedTyreName = notObjectResult.Value as string;
+
+            Assert.NotNull(returnedTyreName);
+            Assert.Equal("Tyre does not exist", returnedTyreName);
         }
     }
 }

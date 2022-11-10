@@ -1,16 +1,23 @@
-﻿using CarService.Models.Configurations;
+﻿using System.Text;
+using System.Threading.Tasks.Dataflow;
+using CarService.DL.Interfaces;
+using CarService.Models.Configurations;
+using CarService.Models.Models;
 using Confluent.Kafka;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 namespace CarService.BL.Kafka
 {
-    public class ConsumerService<TKey, TValue> : IKafkaConsumerService<TKey, TValue>,IHostedService
+    public class ConsumerService<TKey, TValue> : IHostedService
     {
         private IOptionsMonitor<KafkaConsumerSettings> _kafkaConsumerSettings;
         private readonly IConsumer<TKey, TValue> _consumer;
+        private readonly TransformBlock<TValue, string> _purchaseTransformBlock;
+        private readonly ActionBlock<string> _actionBlock;
+        private readonly ITyreRepo _tyreRepo;
 
-        public ConsumerService(IOptionsMonitor<KafkaConsumerSettings> kafkaSettings)
+        public ConsumerService(IOptionsMonitor<KafkaConsumerSettings> kafkaSettings, ITyreRepo tyreRepo)
         {
             _kafkaConsumerSettings = kafkaSettings;
 
@@ -25,16 +32,31 @@ namespace CarService.BL.Kafka
                 .SetValueDeserializer(new MsgPackDeserializer<TValue>())
                 .SetKeyDeserializer(new MsgPackDeserializer<TKey>())
                 .Build();
+
+            _purchaseTransformBlock = new TransformBlock<TValue, string>(async purchase =>
+            {
+                return purchase.ToString();
+            });
+
+            _actionBlock = new ActionBlock<string>(str =>
+            {
+                Console.WriteLine(str);
+            });
+
+            _purchaseTransformBlock.LinkTo(_actionBlock);
+            _tyreRepo = tyreRepo;
         }
 
         public void Consume()
         {
-            _consumer.Subscribe("CarTopic");
+            _consumer.Subscribe("Purchase");
             while (true)
             {
                 var cr = _consumer.Consume();
 
-                Console.WriteLine($"Receiver msg with key:{cr.Message.Key} value:{cr.Message.Value}");
+                _purchaseTransformBlock.Post(cr.Value);
+
+                //Console.WriteLine($"Receiver msg with key:{cr.Message.Key} value:{cr.Message.Value}");
             }
         }
 
@@ -50,5 +72,6 @@ namespace CarService.BL.Kafka
 
             return Task.CompletedTask;
         }
+
     }
 }

@@ -5,12 +5,12 @@ using static Confluent.Kafka.ConfigPropertyNames;
 
 namespace CarService.BL.Kafka
 {
-    public class ProducerService<TKey, TValue> : IKafkaProducerService<TKey, TValue>
+    public class Producer<TKey, TValue> : IKafkaProducerService<TKey, TValue>
     {
         private readonly IOptionsMonitor<KafkaProducerSettings> _kafkaSettings;
         private readonly IProducer<TKey, TValue> _producer;
 
-        public ProducerService(IOptionsMonitor<KafkaProducerSettings> kafkaSettings)
+        public Producer(IOptionsMonitor<KafkaProducerSettings> kafkaSettings)
         {
             _kafkaSettings = kafkaSettings;
 
@@ -35,7 +35,7 @@ namespace CarService.BL.Kafka
                     Value = messageValue
                 };
 
-                var result = await _producer.ProduceAsync("CarTopic", msg);
+                var result = await _producer.ProduceAsync("Purchase", msg);
 
                 if (result != null)
                 {

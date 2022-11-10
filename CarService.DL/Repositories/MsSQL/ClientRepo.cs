@@ -53,6 +53,8 @@ namespace CarService.DL.Repositories.MsSQL
                     await conn.OpenAsync();
 
                     var result = await conn.ExecuteAsync("DELETE FROM Client WHERE Id=@id", new {id = clientId});
+
+                    return clientForDelete;
                 }
             }
             catch (Exception e)
@@ -82,7 +84,7 @@ namespace CarService.DL.Repositories.MsSQL
             return Enumerable.Empty<Client>();
         }
 
-        public async Task<Client?> GetById(int clientId)
+        public async Task<Client> GetById(int clientId)
         {
             try
             {
@@ -101,7 +103,7 @@ namespace CarService.DL.Repositories.MsSQL
             return null;
         }
 
-        public async Task<Client?> GetClientByName(string clientName)
+        public async Task<Client> GetClientByName(string clientName)
         {
             try
             {
@@ -109,7 +111,7 @@ namespace CarService.DL.Repositories.MsSQL
                 {
                     await conn.OpenAsync();
 
-                    return await conn.QueryFirstOrDefaultAsync<Client>("SELECT * FROM Cliet WHERE ClientName = @ClientName WITH(NOLOCK)", new { ClientName = clientName });
+                    return await conn.QueryFirstOrDefaultAsync<Client>("SELECT * FROM Client WITH(NOLOCK) WHERE ClientName = @ClientName", new { ClientName = clientName });
                 }
             }
             catch (Exception e)
@@ -120,7 +122,7 @@ namespace CarService.DL.Repositories.MsSQL
             return null;
         }
 
-        public async Task<Client?> UpdateClient(Client client)
+        public async Task<Client> UpdateClient(Client client)
         {
             try
             {

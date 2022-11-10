@@ -13,5 +13,7 @@ namespace CarService.DL.Interfaces
         public Task<Tyre?> UpdateTyre(Tyre tyre);
 
         public Task<Tyre> DeleteTyre(int tyreId);
+
+        public Task<Tyre> GetTyreByName(string tyreName);
     }
 }

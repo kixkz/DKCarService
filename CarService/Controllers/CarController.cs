@@ -18,9 +18,9 @@ namespace CarService.Controllers
         private readonly ILogger<CarController> _logger;
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
-        private readonly ProducerService<int, Car> _producerService;
+        private readonly Producer<int, Car> _producerService;
 
-        public CarController(ICarRepo carRepo, ILogger<CarController> logger, IMediator mediator, IMapper mapper, ProducerService<int, Car> producerService)
+        public CarController(ICarRepo carRepo, ILogger<CarController> logger, IMediator mediator, IMapper mapper, Producer<int, Car> producerService)
         {
             _carRepo = carRepo;
             _logger = logger;
@@ -36,14 +36,6 @@ namespace CarService.Controllers
         {
             var result = await _mediator.Send(new AddCarCommand(car));
 
-            var newCar = (await _carRepo.GetAllCars()).LastOrDefault();
-
-            if (newCar != null)
-            {
-                await _producerService.Produce(newCar.Id, newCar);
-            }
-
-
             if (result.HttpStatusCode == HttpStatusCode.BadRequest)
             {
                 return BadRequest(result);
@@ -58,6 +50,11 @@ namespace CarService.Controllers
         public async Task<IActionResult> DeleteCar(int id)
         {
             var result = await _mediator.Send(new DeleteCarCommand(id));
+
+            if (result == null)
+            {
+                return BadRequest("Car does not exist");
+            }
 
             return Ok(result);
         }

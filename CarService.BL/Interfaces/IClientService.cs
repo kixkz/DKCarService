@@ -13,5 +13,7 @@ namespace CarService.BL.Interfaces
         public Task<Client> UpdateClient(Client client, int id);
 
         public Task<Client> DeleteClient(int clientId);
+
+        public Task<Client> GetClientByName(string clientName);
     }
 }
