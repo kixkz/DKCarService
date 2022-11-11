@@ -47,7 +47,22 @@ namespace CarService.BL.Services
 
         public async Task<Purchase> UpdatePurchase(Purchase purchase, Guid id)
         {
-            //purchase.PurchaseId = id;
+            var tyre = await _tyreRepo.GetTyreById(purchase.TyreId);
+            var currentPurcahase = await _purchaseRepo.GetPurchaseById(id);
+
+            if (currentPurcahase.Quantity > purchase.Quantity)
+            {
+                tyre.Quantity += currentPurcahase.Quantity + purchase.Quantity;
+            }
+            else
+            {
+                tyre.Quantity -= purchase.Quantity - currentPurcahase.Quantity;
+            }
+            
+            purchase.TotalMoney = purchase.Quantity * tyre.Price;
+
+            await _tyreRepo.UpdateTyre(tyre);
+
             return await _purchaseRepo.UpdatePurchase(purchase);
         }
     }
