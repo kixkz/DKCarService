@@ -1,12 +1,9 @@
-﻿using AutoMapper;
+﻿using System.Net;
 using CarService.DL.Interfaces;
 using CarService.Models.MediatR;
 using CarService.Models.Requests;
 using MediatR;
-using System.Net;
 using Microsoft.AspNetCore.Mvc;
-using CarService.BL.Kafka;
-using CarService.Models.Models;
 
 namespace CarService.Controllers
 {
@@ -15,18 +12,12 @@ namespace CarService.Controllers
     public class CarController : ControllerBase
     {
         private readonly ICarRepo _carRepo;
-        private readonly ILogger<CarController> _logger;
         private readonly IMediator _mediator;
-        private readonly IMapper _mapper;
-        private readonly Producer<int, Car> _producerService;
 
-        public CarController(ICarRepo carRepo, ILogger<CarController> logger, IMediator mediator, IMapper mapper, Producer<int, Car> producerService)
+        public CarController(ICarRepo carRepo, IMediator mediator)
         {
             _carRepo = carRepo;
-            _logger = logger;
             _mediator = mediator;
-            _mapper = mapper;
-            _producerService = producerService;
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -49,11 +40,13 @@ namespace CarService.Controllers
         [HttpDelete(nameof(DeleteCar))]
         public async Task<IActionResult> DeleteCar(int id)
         {
+            if (id <= 0) return BadRequest("Parameter id must be greater than zero");
+
             var result = await _mediator.Send(new DeleteCarCommand(id));
 
             if (result == null)
             {
-                return BadRequest("Car does not exist");
+                return NotFound("Car does not exist");
             }
 
             return Ok(result);
@@ -79,6 +72,8 @@ namespace CarService.Controllers
         [HttpPut(nameof(UpdateCar))]
         public async Task<IActionResult> UpdateCar(UpdateCarRequest car)
         {
+            if (car == null) return BadRequest("Car can not be null");
+
             var result = await _mediator.Send(new UpdateCarCommand(car));
 
             if (result.HttpStatusCode == HttpStatusCode.NotFound)
@@ -97,7 +92,7 @@ namespace CarService.Controllers
 
             var result = await _mediator.Send(new GetCarByIdCommand(id));
 
-            if (result == null) return NotFound($"Car with id:{id} not exist");
+            if (result == null) return NotFound($"Car with id:{id} does not exist");
 
             return Ok(result);
         }
